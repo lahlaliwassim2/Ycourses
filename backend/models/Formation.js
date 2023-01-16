@@ -1,19 +1,18 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
-const { string } = require('joi')
 
 //Formation Schema 
 
 const FormationSchema = new mongoose.Schema({
     title: {
-        type: string,
+        type: String,
         required: true,
         trim: true,
         minlenght:2,
         maxlenght: 200
     },
     description: {
-        type: string,
+        type: String,
         required: true,
         trim: true,
         minlenght:10,
@@ -25,7 +24,7 @@ const FormationSchema = new mongoose.Schema({
         required: true
     },
     organisation:{
-        type: string,
+        type: String,
         required:true
     },
     image: {
@@ -51,23 +50,22 @@ const Formation = mongoose.model("Formation",FormationSchema)
 
 //Validation Creat Formation 
 function ValidateCreatFormation(obj) {
-    const schema = Joi.Object({
-        title:Joi.string().trim().min(2).max(200).required(),
-        description: Joi.string().trim().min(10).max(200).required(),
-        organisation: Joi.string().trim().required()
-    });
-    return schema.validate(obj)
-    
+    const schema = Joi.object({
+        title: Joi.string().trim().min(2).max(200).required(),
+        description: Joi.string().trim().min(5).max(200).required(),
+        organisation: Joi.string().trim(),
+});
+return schema.validate(obj);
 }
 
 //Validation Update Formation 
 function ValidateUpdateFormation(obj) {
-    const schema = Joi.Object({
+    const schema = Joi.object({
         title:Joi.string().trim().min(2).max(200),
         description: Joi.string().trim().min(10).max(200),
         organisation: Joi.string().trim()
     });
-    return schema.validate(obj)
+    return schema.validate(obj);
     
 }
 module.exports={
