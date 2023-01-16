@@ -34,15 +34,30 @@ function verifyTokenAndAdmin(req,res,next) {
 // Only User Himself
 function verifyTokenAndOnlyUser(req,res,next) {
     verifyToken(req,res,()=>{
-        if(!req.user.isAdmin) {
-            res.status(401).json({msg:"not allowed , only admin"})
-        }else {
+        if(req.user.id == req.params.id) {
             next()
+        }else {
+            res.status(401).json({msg:"not allowed , only user himself"})
         }
     })
 }
+
+
+// Verify Token and Authorization
+function verifyTokenAndAuthorization(req,res,next) {
+    verifyToken(req,res,()=>{
+        if(req.user.id == req.params.id || req.user.isAdmin) {
+            next()
+        }else {
+            res.status(401).json({msg:"not allowed , only user himself or Admin"})
+        }
+    })
+}
+
+
 module.exports = {
     verifyToken,
     verifyTokenAndAdmin,
-    verifyTokenAndOnlyUser
+    verifyTokenAndOnlyUser,
+    verifyTokenAndAuthorization
 }
