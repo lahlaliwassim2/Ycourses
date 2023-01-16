@@ -97,7 +97,7 @@ module.exports.profilePhotoUploadCtrl = asyncHandler(async(req,res)=>{
         publicId: result.public_id,
     }
     await user.save();
-    
+
     //7 Send response to client
     res.status(200).json({
         msg: "your photo upload seccesfuly",  
@@ -105,4 +105,22 @@ module.exports.profilePhotoUploadCtrl = asyncHandler(async(req,res)=>{
     })
     //8 Remove image from the server
     fs.unlinkSync(imagePath);
+})
+
+/**-------------------------------------
+* @desc----DELETE PROFILE
+* @route --- /api/users/delete/:id
+* @methode - DELETE
+* @acces  private (only admin or UserHimSelf)
+---------------------------------------*/
+module.exports.deleteUserProfilCtrl = asyncHandler(async(req,res) => {
+    const user = await User.findById(req.params.id)
+    if(!user) return res.status(404).json({msg: "user not found"})
+
+    // Delete the picture from cloundinary
+    await cloudinaryRemoveImage(user.profilePhoto.publicId)
+    //Delete the user himself 
+    await User.findByIdAndDelete(req.params.id)
+    //Send a response to the client
+    res.status(200).json({message : "Your profil is deleted"})
 })
