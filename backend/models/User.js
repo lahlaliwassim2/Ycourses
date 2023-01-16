@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const /* Joi is a validation library for Node.js and browsers. */
 Joi = require('joi')
 const jwt = require('jsonwebtoken')
 //User schema 
