@@ -39,3 +39,26 @@ module.exports.createFormation = asyncHandler(async(req,res) =>{
     // 6 remove image from the server
     fs.unlinkSync(imagePath);
 })
+
+ /**-------------------------------------
+* @desc----Get Formation
+* @route --- /api/formation
+* @methode - GET
+* @acces  public
+---------------------------------------*/
+module.exports.getAllFormationCtrl = asyncHandler(async(req,res)=>{
+    const POST_PER_PAGE = 3
+    const {pageNumber,organisation} = req.query;
+    let posts;
+
+    if(pageNumber) {
+        formations = await Formation.find()
+                    .skip((pageNumber - 1)*POST_PER_PAGE)
+                    .limit(POST_PER_PAGE);
+    } else if(organisation) {
+        formations = await Formation.find({organisation})
+    }else {
+        formations = await Formation.find()
+    }
+    res.status(200).json(formations)
+})
