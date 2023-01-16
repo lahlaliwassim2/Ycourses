@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
         }
     },
     bio : {
-        type: String
+        type: String,
     },
     isAdmin : {
         type: Boolean,
@@ -85,7 +85,7 @@ function validateUpdateUser(obj) {
     const schema = Joi.object({
         username: Joi.string().trim().min(5).max(100),
         password: Joi.string().trim().min(8).max(200),
-        bio : Joi.string
+        bio : Joi.string()
 });
 return schema.validate(obj);
 }
