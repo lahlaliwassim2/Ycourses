@@ -43,5 +43,6 @@ function verifyTokenAndOnlyUser(req,res,next) {
 }
 module.exports = {
     verifyToken,
-    verifyTokenAndAdmin
+    verifyTokenAndAdmin,
+    verifyTokenAndOnlyUser
 }
