@@ -42,12 +42,26 @@ module.exports.updateUserProfilCtrl = asyncHandler(async(req,res)=>{
         const salt = bcrypt.genSalt(10)
         req.body.password = await bcrypt.hash(req.body.password,salt)
     }
-    const updateUser = await User.findByIdAndUpdate(req.body.id,{
+    const updateUser = await User.findByIdAndUpdate(req.params.id, {
         $set: {
             username: req.body.username,
             password: req.body.password,
             bio: req.body.bio
         }
-    },{ new : true}).select("-password");
+    }, { new : true}).select("-password");
+
     res.status(200).json(updateUser);
+});
+
+
+/**-------------------------------------
+* @desc---- Get Users Cont
+* @route --- /api/users/cont
+* @methode - Get
+* @acces ---- private(only admin )
+---------------------------------------*/
+
+module.exports.getUsersCountCtrl = asyncHandler(async(req,res) =>{
+    const count = await  User.count()
+    res.status(200).json(count)
 })
