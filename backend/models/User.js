@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
-const Joi = require('joi')
+const /* Joi is a validation library for Node.js and browsers. */
+Joi = require('joi')
+const jwt = require('jsonwebtoken')
 //User schema 
 
 const UserSchema = new mongoose.Schema({
@@ -49,6 +51,11 @@ const UserSchema = new mongoose.Schema({
     timestamps: true
 });
 
+//Generete Auth Token 
+UserSchema.methods.generateAuthToken = function () {
+    return jwt.sign({id: this._id , isAdmin: this.isAdmin},process.env.PRIVATE_KEY)
+}
+
 // User Model 
 const User = mongoose.model("User",UserSchema);
 
@@ -62,8 +69,16 @@ function validateRegisterUser(obj) {
 });
 return schema.validate(obj);
 }
+function validateLoginUser(obj) {
+    const schema = Joi.object({
+        email: Joi.string().trim().min(5).max(200).required().email(),
+        password: Joi.string().trim().min(8).max(200).required(),
+});
+return schema.validate(obj);
+}
 
 module.exports={
     User,
-    validateRegisterUser
+    validateRegisterUser,
+    validateLoginUser
 }
