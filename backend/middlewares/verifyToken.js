@@ -30,6 +30,17 @@ function verifyTokenAndAdmin(req,res,next) {
     })
 }
 
+
+// Only User Himself
+function verifyTokenAndOnlyUser(req,res,next) {
+    verifyToken(req,res,()=>{
+        if(!req.user.isAdmin) {
+            res.status(401).json({msg:"not allowed , only admin"})
+        }else {
+            next()
+        }
+    })
+}
 module.exports = {
     verifyToken,
     verifyTokenAndAdmin
