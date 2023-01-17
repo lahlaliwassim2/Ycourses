@@ -41,8 +41,17 @@ const FormationSchema = new mongoose.Schema({
         }
     ]
 },{
-    timestamps:true
+    timestamps:true,
+    toJSON: {virtuals:true},
+    toObject: {virtuals:true}
 });
+//Populate Comment For This Formation
+FormationSchema.virtual("comment",{
+    ref:"Comment",
+    foreignField: "formationId",
+    localField: "_id"
+
+})
 
 //Formation Model 
 
