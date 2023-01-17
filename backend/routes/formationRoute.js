@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { createFormation, getAllFormationCtrl, getSingleFormationCtrl, getCountFormationCtrl, deleteFormationCtrl, updateFormationCtrl, updateFormationImageCtrl } = require('../controllers/FormationCtrl')
+const { createFormation, getAllFormationCtrl, getSingleFormationCtrl, getCountFormationCtrl, deleteFormationCtrl, updateFormationCtrl, updateFormationImageCtrl, togleLikeCtrl } = require('../controllers/FormationCtrl')
 const photoUpload = require('../middlewares/photoUpload')
 const {verifyToken, verifyTokenAndAdmin} = require('../middlewares/verifyToken')
 const validateObjectId = require('../middlewares/validateObjectId')
