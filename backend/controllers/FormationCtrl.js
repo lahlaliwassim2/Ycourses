@@ -144,3 +144,45 @@ module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
     //5 Sen msg TO THE client
     res.status(200).json(updatedFormation)
 })
+
+
+ /**-------------------------------------
+* @desc----Update Image Formation
+* @route --- /api/formation/upload-image/:id
+* @methode - PUT
+* @acces  private(only admin or user create post)
+---------------------------------------*/
+module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
+    // 1 validation 
+
+    if(!req.file) res.status(400).json({msg: "nom image provided"})
+    //2 Get the formations from db and chek this formation exist
+    const formation = await Formation.findById(req.params.id)
+    if(!formation) {
+        return res.status(400).json({msg:"formation not found"})
+    }
+    //3 Chek if this formation belong to logged in user
+    if(req.user.id !== formation.user.toString()){
+        return res.status(403).json({msg:"acces denied"})
+    }
+    //4 Update the old  Image 
+    await cloudinaryRemoveImage(formation.image.publicId)
+
+
+    //5 Upload new photo 
+    const imagePath = path.join(__dirname, `../images/${req.file.filename}`)
+    const result = await cloudinaryUploadImage(imagePath)
+    //6 Update photo in the DB 
+    const updatedFormation = await Formation.findByIdAndUpdate(req.params.id,{
+        $set: {
+           image:{
+            url : result.secure_url,
+            publicId:result.public_id
+           }
+        }
+    }, { new:true }).populate("user",["-password"])
+    //7 Send response to clieNt
+    res.status(200).json(updatedFormation)
+    //8  REMOVE IMAGE FROM THE SERVER 
+    fs.unlinkSync(imagePath)
+})
