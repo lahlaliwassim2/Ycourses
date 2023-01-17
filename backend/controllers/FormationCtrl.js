@@ -77,7 +77,9 @@ module.exports.getAllFormationCtrl = asyncHandler(async(req,res)=>{
 * @acces  public
 ---------------------------------------*/
 module.exports.getSingleFormationCtrl = asyncHandler(async(req,res)=>{
-    const formation = await Formation.findById(req.params.id).populate("user",["-password"])
+    const formation = await Formation.findById(req.params.id)
+    .populate("user",["-password"])
+    .populate("comment")
     if(!formation) res.status(404).json({msg : "formation not found"})
     res.status(200).json(formation)
 })
