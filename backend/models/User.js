@@ -47,8 +47,17 @@ const UserSchema = new mongoose.Schema({
     
 
 },{
-    timestamps: true
+    timestamps: true,
+    toJSON: {virtuals:true},
+    toObject : {virtuals:true}
 });
+//populate Formation 
+
+UserSchema.virtual("formations",{
+    ref: "Formation",
+    foreignField: "user",
+    localField: "_id"
+})
 
 //Generete Auth Token 
 UserSchema.methods.generateAuthToken = function () {
