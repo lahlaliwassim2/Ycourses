@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { createFormation, getAllFormationCtrl, getSingleFormationCtrl, getCountFormationCtrl, deleteFormationCtrl, updateFormationCtrl } = require('../controllers/FormationCtrl')
+const { createFormation, getAllFormationCtrl, getSingleFormationCtrl, getCountFormationCtrl, deleteFormationCtrl, updateFormationCtrl, updateFormationImageCtrl } = require('../controllers/FormationCtrl')
 const photoUpload = require('../middlewares/photoUpload')
 const {verifyToken, verifyTokenAndAdmin} = require('../middlewares/verifyToken')
 const validateObjectId = require('../middlewares/validateObjectId')
@@ -15,4 +15,8 @@ router.route('/:id')
       .get(validateObjectId,getSingleFormationCtrl)
       .delete(validateObjectId,verifyToken,deleteFormationCtrl)   
       .put(validateObjectId,verifyToken,updateFormationCtrl)
+      
+//api/formations/update-image/:id
+router.route("/update-image/:id")
+      .put(validateObjectId,verifyToken,photoUpload.single("image"),updateFormationImageCtrl)
 module.exports = router

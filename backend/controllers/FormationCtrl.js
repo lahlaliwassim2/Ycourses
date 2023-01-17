@@ -152,7 +152,7 @@ module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
 * @methode - PUT
 * @acces  private(only admin or user create post)
 ---------------------------------------*/
-module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
+module.exports.updateFormationImageCtrl = asyncHandler(async(req,res)=>{
     // 1 validation 
 
     if(!req.file) res.status(400).json({msg: "nom image provided"})
@@ -178,9 +178,38 @@ module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
             publicId:result.public_id
            }
         }
-    }, { new:true }).populate("user",["-password"])
+    }, { new:true })
     //7 Send response to clieNt
     res.status(200).json(updatedFormation)
     //8  REMOVE IMAGE FROM THE SERVER 
     fs.unlinkSync(imagePath)
+})
+
+ /**-------------------------------------
+* @desc----Togle Lik
+* @route --- /api/formation/like/:id
+* @methode - PUT
+* @acces  private (only logged user)
+---------------------------------------*/
+module.exports.togleLikeCtrl=asyncHandler(async(req,res)=>{
+    const loggedInUser = req.user.id;
+    const { id: formationId } = req.params
+    let formation = await Formation.findById(formationId);
+    if(!formation) return res.status(404).json({msg:"Formation not found"});
+    const isFormationAlreadyLiked = Formation.likes.find(
+        (user)=>user.toString()===loggedInUser);
+    if(isFormationAlreadyLiked) {
+        Formation = await Formation.findByIdAndUpdate(formationId,{
+            $pull: {
+                likes: loggedInUser
+            }
+        },{new:true})
+    }else {
+        Formation = await Formation.findByIdAndUpdate(formationId,{
+            $push: {
+                likes: loggedInUser
+            }
+        },{new:true})
+    }
+    res.status(200).json(formation)
 })
