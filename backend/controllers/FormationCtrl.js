@@ -196,16 +196,16 @@ module.exports.togleLikeCtrl=asyncHandler(async(req,res)=>{
     const { id: formationId } = req.params
     let formation = await Formation.findById(formationId);
     if(!formation) return res.status(404).json({msg:"Formation not found"});
-    const isFormationAlreadyLiked = Formation.likes.find(
+    const isFormationAlreadyLiked = formation.likes.find(
         (user)=>user.toString()===loggedInUser);
     if(isFormationAlreadyLiked) {
-        Formation = await Formation.findByIdAndUpdate(formationId,{
+        formation = await Formation.findByIdAndUpdate(formationId,{
             $pull: {
                 likes: loggedInUser
             }
         },{new:true})
     }else {
-        Formation = await Formation.findByIdAndUpdate(formationId,{
+        formation = await Formation.findByIdAndUpdate(formationId,{
             $push: {
                 likes: loggedInUser
             }
