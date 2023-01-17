@@ -12,7 +12,7 @@ const {cloudinaryUploadImage , cloudinaryRemoveImage} = require('../utils/clound
 ---------------------------------------*/
 
 module.exports.getAllUsers = asyncHandler(async(req,res) =>{
-    const users =await  User.find().select("-password")
+    const users =await  User.find().select("-password").populate("formations")
     res.status(200).json(users)
 })
 
