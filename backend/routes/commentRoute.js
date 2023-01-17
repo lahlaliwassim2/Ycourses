@@ -1,4 +1,4 @@
-const { createCommentCtrl, gettCommentCtrl, deleteCommentCtrl } = require('../controllers/commentCtrl');
+const { createCommentCtrl, gettCommentCtrl, deleteCommentCtrl, updateCommentCtrl } = require('../controllers/commentCtrl');
 const validateObjectId = require('../middlewares/validateObjectId');
 const { verifyToken, verifyTokenAndAdmin } = require('../middlewares/verifyToken');
 
@@ -9,5 +9,7 @@ router.route("/")
     .post(verifyToken,createCommentCtrl)
     .get(verifyTokenAndAdmin,gettCommentCtrl)
 // /api/comment/:is
-router.route("/:id").delete(validateObjectId,verifyToken,deleteCommentCtrl)
+router.route("/:id")
+    .delete(validateObjectId,verifyToken,deleteCommentCtrl)
+    .put(validateObjectId,verifyToken,updateCommentCtrl)
 module.exports = router;
