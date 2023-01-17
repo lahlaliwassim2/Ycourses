@@ -52,3 +52,26 @@ module.exports.deleteCommentCtrl = asyncHandler(async(req,res)=>{
     }
  res.status(200).json(comments)
  })
+
+ /**-------------------------------------
+* @desc----Update Comment
+* @route --- /api/comment/id
+* @methode - PUT
+* @acces  private (only loged User)
+---------------------------------------*/
+module.exports.updateCommentCtrl = asyncHandler(async(req,res)=>{
+    //Validation 
+    const {error} = validateUpdateComment(req.body)
+    if(error) res.status(400).json({msg: error.details[0].message})
+    
+    const comment = await Comment.findById(req.params.id)
+    if(!comment) return res.status(404).json({msg : "Comment not found"})
+    if(req.user.id !== comment.user.toString()) return res.status(404).json({msg : "acces denied , only User himself can edit his comment"})
+
+    const updateComment = await Comment.findByIdAndUpdate(req.params.id,{
+        $set : {
+            text: req.body.text,
+        }
+    },{new:true})
+    res.status(200).json(updateComment)
+})
