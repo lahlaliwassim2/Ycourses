@@ -167,8 +167,6 @@ module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
     }
     //4 Update the old  Image 
     await cloudinaryRemoveImage(formation.image.publicId)
-
-
     //5 Upload new photo 
     const imagePath = path.join(__dirname, `../images/${req.file.filename}`)
     const result = await cloudinaryUploadImage(imagePath)
