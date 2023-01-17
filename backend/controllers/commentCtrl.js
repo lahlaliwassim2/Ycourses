@@ -32,5 +32,23 @@ res.status(201).json(comment)
 ---------------------------------------*/
 module.exports.gettCommentCtrl = asyncHandler(async(req,res)=>{
    const comments = await Comment.find().populate("user")
-res.status(201).json(comments)
+res.status(200).json(comments)
 })
+
+/**-------------------------------------
+* @desc----Delete Comment
+* @route --- /api/comment/:id
+* @methode - DELETE
+* @acces  private (only admin or owner the comment)
+---------------------------------------*/
+module.exports.deleteCommentCtrl = asyncHandler(async(req,res)=>{
+    const comment = await Comment.findById(req.params.id)
+    if(!comment) res.status(404).json({msg:"comment not found"})
+    if(req.user.isAdmin || req.user.id === comment.user.toString()) {
+        await Comment.findByIdAndDelete(req.params.id);
+        res.status(200).json({msg: "comment has been deleted"})
+    }else{
+        res.status(400).json({msg: "acces denied , not allowd"})
+    }
+ res.status(200).json(comments)
+ })
