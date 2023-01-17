@@ -16,6 +16,7 @@ app.use(express.json())
 app.use('/api/auth', require('./routes/authRoute'))
 app.use('/api/users', require('./routes/usersRoute'))
 app.use('/api/formation', require('./routes/formationRoute'))
+app.use('/api/comment', require('./routes/commentRoute'))
 //Running To Server
 
 const PORT = process.env.PORT
