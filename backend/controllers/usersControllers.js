@@ -3,7 +3,9 @@ const { User, validateUpdateUser } = require('../models/User')
 const bcrypt = require('bcryptjs')
 const path = require("path")
 const fs = require('fs')
-const {cloudinaryUploadImage , cloudinaryRemoveImage} = require('../utils/cloundinary')
+const {cloudinaryUploadImage , cloudinaryRemoveImage,cloudinaryRemoveMultipleImage} = require('../utils/cloundinary')
+const {Comment} = require('../models/Comment')
+const {Formation} = require('../models/Formation')
 /**-------------------------------------
 * @desc---- Get All User Profil
 * @route --- /api/users/profil
@@ -116,9 +118,19 @@ module.exports.profilePhotoUploadCtrl = asyncHandler(async(req,res)=>{
 module.exports.deleteUserProfilCtrl = asyncHandler(async(req,res) => {
     const user = await User.findById(req.params.id)
     if(!user) return res.status(404).json({msg: "user not found"})
-
+    // Get all formations
+    const formations = await Formation.find({user: user._id})
+    //get the public ids from the formations
+    const publicIds =formations?.map((formation)=> formation.image.publicId)
+    //Delet all formations Image from cloundary that belong the this user
+    if(publicIds?.lenght > 0) {
+        await cloudinaryRemoveMultipleImage(publicIds)
+    }
     // Delete the picture from cloundinary
     await cloudinaryRemoveImage(user.profilePhoto.publicId)
+    //delete User Posts & Comments
+    await Formation.deleteMany({user : user._id})
+    await Comment.deleteMany({ user : user._id})
     //Delete the user himself 
     await User.findByIdAndDelete(req.params.id)
     //Send a response to the client
