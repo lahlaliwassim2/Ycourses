@@ -159,7 +159,7 @@ module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
     //2 Get the formations from db and chek this formation exist
     const formation = await Formation.findById(req.params.id)
     if(!formation) {
-        return res.status(400).json({msg:"formation not found"})
+        return res.status(400).json({msg:"formation not found"}) 
     }
     //3 Chek if this formation belong to logged in user
     if(req.user.id !== formation.user.toString()){
