@@ -2,7 +2,8 @@
  const path = require('path')
  const asyncHandler = require('express-async-handler')
  const { Formation, ValidateCreatFormation } = require('../models/Formation')
- const {cloudinaryUploadImage} = require("../utils/cloundinary")
+ const {cloudinaryUploadImage, cloudinaryRemoveImage} = require("../utils/cloundinary")
+const { post } = require('../routes/formationRoute')
 
 
  /**-------------------------------------
@@ -49,16 +50,66 @@ module.exports.createFormation = asyncHandler(async(req,res) =>{
 module.exports.getAllFormationCtrl = asyncHandler(async(req,res)=>{
     const POST_PER_PAGE = 3
     const {pageNumber,organisation} = req.query;
-    let posts;
+    let formations;
 
     if(pageNumber) {
         formations = await Formation.find()
                     .skip((pageNumber - 1)*POST_PER_PAGE)
-                    .limit(POST_PER_PAGE);
+                    .limit(POST_PER_PAGE)
+                    .sort({ createdAt: -1})
+                    .populate("user",["-password"])
     } else if(organisation) {
         formations = await Formation.find({organisation})
+        .sort({ createdAt: -1})
+        .populate("user",["-password"])
     }else {
         formations = await Formation.find()
+        .sort({ createdAt: -1})
+        .populate("user",["-password"])
     }
     res.status(200).json(formations)
+})
+
+ /**-------------------------------------
+* @desc----Get single Formation
+* @route --- /api/formation/:id
+* @methode - GET
+* @acces  public
+---------------------------------------*/
+module.exports.getSingleFormationCtrl = asyncHandler(async(req,res)=>{
+    const formation = await Formation.findById(req.params.id).populate("user",["-password"])
+    if(!formation) res.status(404).json({msg : "formation not found"})
+    res.status(200).json(formation)
+})
+
+
+ /**-------------------------------------
+* @desc----Count Formation
+* @route --- /api/formation/count
+* @methode - GET
+* @acces  public
+---------------------------------------*/
+module.exports.getCountFormationCtrl = asyncHandler(async(req,res)=>{
+    const count = await Formation.count(req.params.id)
+    res.status(200).json(count)
+})
+
+ /**-------------------------------------
+* @desc----Delete Formation
+* @route --- /api/formation/:id
+* @methode - DELETE
+* @acces  private(only admin or user create post)
+---------------------------------------*/
+module.exports.deleteFormationCtrl = asyncHandler(async(req,res)=>{
+    const formation = await Formation.findById(req.params.id)
+    if(!formation) res.status(404).json({msg : "formation not found"})
+    if(req.user.isAdmin || req.user.id === formation.user.toString()){
+        await Formation.findByIdAndDelete(req.params.id);
+        await cloudinaryRemoveImage(formation.image.publicId);
+        // @todo  delete All cmnt 
+        res.status(200).json({msg : "formation deleted",postId:formation._id})
+    } else{
+        res.status(403).json({msg : "acces denied "})
+    }
+
 })
