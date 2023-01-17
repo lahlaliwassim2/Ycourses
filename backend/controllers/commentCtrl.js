@@ -24,3 +24,13 @@ res.status(201).json(comment)
 })
 
 
+/**-------------------------------------
+* @desc----Get all  Comments
+* @route --- /api/comment
+* @methode - GET
+* @acces  private (only admin)
+---------------------------------------*/
+module.exports.gettCommentCtrl = asyncHandler(async(req,res)=>{
+   const comments = await Comment.find().populate("user")
+res.status(201).json(comments)
+})
