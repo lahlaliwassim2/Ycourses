@@ -3,8 +3,8 @@
  const asyncHandler = require('express-async-handler')
  const { Formation, ValidateCreatFormation,ValidateUpdateFormation } = require('../models/Formation')
  const {cloudinaryUploadImage, cloudinaryRemoveImage} = require("../utils/cloundinary")
-const { post } = require('../routes/formationRoute')
-
+ const { post } = require('../routes/formationRoute')
+ const {Comment} = require('../models/Comment')
 
  /**-------------------------------------
 * @desc----Create new Formation
@@ -109,6 +109,7 @@ module.exports.deleteFormationCtrl = asyncHandler(async(req,res)=>{
         await Formation.findByIdAndDelete(req.params.id);
         await cloudinaryRemoveImage(formation.image.publicId);
         // @todo  delete All cmnt 
+        await Comment.deleteMany({ formationId: formation._id})
         res.status(200).json({msg : "formation deleted",postId:formation._id})
     } else{
         res.status(403).json({msg : "acces denied "})
