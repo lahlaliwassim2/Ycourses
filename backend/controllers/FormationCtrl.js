@@ -1,7 +1,7 @@
  const fs = require('fs')
  const path = require('path')
  const asyncHandler = require('express-async-handler')
- const { Formation, ValidateCreatFormation } = require('../models/Formation')
+ const { Formation, ValidateCreatFormation,ValidateUpdateFormation } = require('../models/Formation')
  const {cloudinaryUploadImage, cloudinaryRemoveImage} = require("../utils/cloundinary")
 const { post } = require('../routes/formationRoute')
 
@@ -112,4 +112,35 @@ module.exports.deleteFormationCtrl = asyncHandler(async(req,res)=>{
         res.status(403).json({msg : "acces denied "})
     }
 
+})
+
+ /**-------------------------------------
+* @desc----Update Formation
+* @route --- /api/formation/:id
+* @methode - PUT
+* @acces  private(only admin or user create post)
+---------------------------------------*/
+module.exports.updateFormationCtrl = asyncHandler(async(req,res)=>{
+    // 1 validation 
+    const {error} = ValidateUpdateFormation(req.body) 
+    if(error) res.status(400).json({msg: error.details[o].message})
+    //2 Get the formations from db and chek this formation exist
+    const formation = await Formation.findById(req.params.id)
+    if(!formation) {
+        return res.status(400).json({msg:"formation not found"})
+    }
+    //3 Chek if this formation belong to logged in user
+    if(req.user.id !== formation.user.toString()){
+        return res.status(403).json({msg:"acces denied"})
+    }
+    //4 Update Formation
+    const updatedFormation = await Formation.findByIdAndUpdate(req.params.id,{
+        $set: {
+            title: req.body.title,
+            description: req.body.description,
+            organisation: req.body.organisation
+        }
+    }, { new:true }).populate("user",["-password"])
+    //5 Sen msg TO THE client
+    res.status(200).json(updatedFormation)
 })
