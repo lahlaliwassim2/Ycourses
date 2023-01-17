@@ -16,7 +16,11 @@ router.route('/:id')
       .delete(validateObjectId,verifyToken,deleteFormationCtrl)   
       .put(validateObjectId,verifyToken,updateFormationCtrl)
       
-//api/formations/update-image/:id
+//api/formation/update-image/:id
 router.route("/update-image/:id")
       .put(validateObjectId,verifyToken,photoUpload.single("image"),updateFormationImageCtrl)
+
+
+//api/formation/like/:id
+router.route("/like/:id").put(validateObjectId, verifyToken ,togleLikeCtrl)
 module.exports = router
