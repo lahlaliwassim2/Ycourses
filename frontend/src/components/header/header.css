@@ -75,7 +75,39 @@
 .header-right-link i {
     margin-right: 5px;
 }
+.header-right-user-info{
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.header-right-username {
+    font-size: 21px;
+    font-weight: 500;
+}
+.header-right-user-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.header-drop{
+    position: absolute;
+    right:50%;
+    top:100%;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 3px;
+    width: 150px;
+    text-align: left;
 
+}
+.header-drop-item{
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 21px;
+    margin-top: 15px;
+    cursor: pointer;
+
+}
 /* Media Queries */
 @media (max-width: 990px) {
     .header-left {
